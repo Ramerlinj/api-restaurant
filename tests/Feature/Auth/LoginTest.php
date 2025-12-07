@@ -22,7 +22,7 @@ it('issues a Sanctum token for valid credentials', function (): void {
     $response->assertOk()
         ->assertJsonStructure([
             'data' => [
-                'user' => ['id', 'name', 'email'],
+                'user' => ['id', 'name', 'surname', 'email'],
                 'access_token',
                 'token_type',
             ],
@@ -34,6 +34,7 @@ it('issues a Sanctum token for valid credentials', function (): void {
 it('registers a new user and issues a token', function (): void {
     $response = postJson('/api/auth/register', [
         'name' => 'New User',
+        'surname' => 'Tester',
         'email' => 'new.user@example.com',
         'password' => 'Secret123!',
         'password_confirmation' => 'Secret123!',
@@ -44,7 +45,7 @@ it('registers a new user and issues a token', function (): void {
         ->assertJsonPath('data.user.email', 'new.user@example.com')
         ->assertJsonStructure([
             'data' => [
-                'user' => ['id', 'name', 'email'],
+                'user' => ['id', 'name', 'surname', 'email'],
                 'access_token',
                 'token_type',
             ],
@@ -52,6 +53,7 @@ it('registers a new user and issues a token', function (): void {
 
     $this->assertDatabaseHas('users', [
         'email' => 'new.user@example.com',
+        'surname' => 'Tester',
     ]);
 });
 
@@ -62,6 +64,7 @@ it('validates duplicated emails on registration', function (): void {
 
     $response = postJson('/api/auth/register', [
         'name' => 'Dup User',
+        'surname' => 'Tester',
         'email' => 'duplicate@example.com',
         'password' => 'Secret123!',
         'password_confirmation' => 'Secret123!',
@@ -112,6 +115,7 @@ it('returns the authenticated user and revokes tokens on logout', function (): v
 it('updates the authenticated user profile', function (): void {
     $user = User::factory()->create([
         'name' => 'Old Name',
+        'surname' => 'Old Last',
         'email' => 'old@example.com',
         'phone' => '12345',
     ]);
@@ -120,6 +124,7 @@ it('updates the authenticated user profile', function (): void {
 
     $response = putJson('/api/auth/me', [
         'name' => 'New Name',
+        'surname' => 'New Last',
         'email' => 'new@example.com',
         'phone' => '98765',
     ], [
@@ -128,14 +133,54 @@ it('updates the authenticated user profile', function (): void {
 
     $response->assertOk()
         ->assertJsonPath('data.user.name', 'New Name')
+        ->assertJsonPath('data.user.surname', 'New Last')
         ->assertJsonPath('data.user.email', 'new@example.com');
 
     $this->assertDatabaseHas('users', [
         'id' => $user->id,
         'name' => 'New Name',
+        'surname' => 'New Last',
         'email' => 'new@example.com',
         'phone' => '98765',
     ]);
+});
+
+it('allows superadmins to change their own role', function (): void {
+    $super = User::factory()->create([
+        'role' => User::ROLE_SUPERADMIN,
+    ]);
+
+    $token = $super->createToken('test-device')->plainTextToken;
+
+    $response = putJson('/api/auth/me', [
+        'role' => User::ROLE_USER,
+    ], [
+        'Authorization' => 'Bearer ' . $token,
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.user.role', User::ROLE_USER);
+
+    $this->assertDatabaseHas('users', [
+        'id' => $super->id,
+        'role' => User::ROLE_USER,
+    ]);
+});
+
+it('prevents non superadmins from changing their role', function (): void {
+    $user = User::factory()->create([
+        'role' => User::ROLE_ADMIN,
+    ]);
+
+    $token = $user->createToken('test-device')->plainTextToken;
+
+    $response = putJson('/api/auth/me', [
+        'role' => User::ROLE_SUPERADMIN,
+    ], [
+        'Authorization' => 'Bearer ' . $token,
+    ]);
+
+    $response->assertForbidden();
 });
 
 it('deletes the authenticated user', function (): void {
