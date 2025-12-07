@@ -3,6 +3,7 @@
 namespace App\Modules\Auth\Services;
 
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -43,6 +44,7 @@ class AuthService
         return $this->db->transaction(function () use ($payload) {
             $user = User::create([
                 'name' => $payload['name'],
+                'surname' => $payload['surname'],
                 'email' => $payload['email'],
                 'password' => Hash::make($payload['password']),
                 'phone' => $payload['phone'] ?? null,
@@ -63,10 +65,14 @@ class AuthService
         return $this->db->transaction(function () use ($user, $payload) {
             $attributes = [];
 
-            foreach (['name', 'email', 'phone', 'password'] as $field) {
+            foreach (['name', 'surname', 'email', 'phone', 'password', 'role'] as $field) {
                 if (array_key_exists($field, $payload)) {
                     $attributes[$field] = $payload[$field];
                 }
+            }
+
+            if (array_key_exists('role', $attributes) && !$user->isSuperAdmin()) {
+                throw new AuthorizationException('Only superadmins can change their role.');
             }
 
             if (array_key_exists('password', $attributes)) {
