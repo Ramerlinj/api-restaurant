@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,7 +18,7 @@ return new class extends Migration
             $table->integer('city_id');
             $table->string('sector', 100)->nullable();
             $table->string('reference', 200)->nullable();
-            $table->timestamp('created_at')->nullable()->default(DB::raw("now()"));
+            $table->timestamp('created_at')->nullable()->useCurrent();
         });
     }
 
