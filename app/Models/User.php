@@ -10,6 +10,16 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    public const ROLE_USER = 'user';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_SUPERADMIN = 'superadmin';
+
+    public const AVAILABLE_ROLES = [
+        self::ROLE_USER,
+        self::ROLE_ADMIN,
+        self::ROLE_SUPERADMIN,
+    ];
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -25,9 +35,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
         'email',
         'password',
         'phone',
+        'role',
     ];
 
     /**
@@ -51,5 +63,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === self::ROLE_SUPERADMIN;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function hasAdminPrivileges(): bool
+    {
+        return $this->isAdmin() || $this->isSuperAdmin();
     }
 }
