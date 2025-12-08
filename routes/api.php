@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Auth\Controllers\AuthController;
+use App\Modules\Menu\Controllers\IngredientController;
 use App\Modules\Users\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,13 @@ Route::prefix('auth')->group(function (): void {
 Route::middleware('auth:sanctum')->prefix('users')->group(function (): void {
     Route::put('{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('{user}', [UserController::class, 'destroy'])->name('users.destroy');
+});
+
+Route::prefix('ingredients')->group(function (): void {
+    Route::get('/', [IngredientController::class, 'index'])->name('ingredients.index');
+
+    Route::middleware('auth:sanctum')->group(function (): void {
+        Route::post('/', [IngredientController::class, 'store'])->name('ingredients.store');
+        Route::put('{ingredient}', [IngredientController::class, 'update'])->name('ingredients.update');
+    });
 });
