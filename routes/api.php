@@ -2,6 +2,7 @@
 
 use App\Modules\Auth\Controllers\AuthController;
 use App\Modules\Menu\Controllers\IngredientController;
+use App\Modules\Menu\Controllers\PizzaController;
 use App\Modules\Users\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,5 +29,14 @@ Route::prefix('ingredients')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/', [IngredientController::class, 'store'])->name('ingredients.store');
         Route::put('{ingredient}', [IngredientController::class, 'update'])->name('ingredients.update');
+    });
+});
+
+Route::prefix('pizzas')->group(function (): void {
+    Route::get('/', [PizzaController::class, 'index'])->name('pizzas.index');
+
+    Route::middleware('auth:sanctum')->group(function (): void {
+        Route::post('/', [PizzaController::class, 'store'])->name('pizzas.store');
+        Route::put('{pizza}', [PizzaController::class, 'update'])->name('pizzas.update');
     });
 });

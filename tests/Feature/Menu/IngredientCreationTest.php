@@ -3,7 +3,6 @@
 use App\Models\User;
 use App\Modules\Menu\Models\Ingredient;
 use App\Services\CloudinaryService;
-use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use Mockery as MockeryFacade;
 use function Pest\Laravel\getJson;
@@ -168,11 +167,3 @@ it('prevents non admins from updating ingredients', function (): void {
 
     $response->assertForbidden();
 });
-
-function fakePngUpload(string $name): UploadedFile
-{
-    $path = tempnam(sys_get_temp_dir(), 'pest-img-');
-    file_put_contents($path, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9l9xEAAAAASUVORK5CYII='));
-
-    return new UploadedFile($path, $name, 'image/png', null, true);
-}
