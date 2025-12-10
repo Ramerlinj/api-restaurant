@@ -1,0 +1,1292 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Restaurant",
+        "description": "REST API para autenticación de usuarios, administración del menú y gestión de ingredientes.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Servidor principal"
+        }
+    ],
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Inicia sesión y genera un token Sanctum",
+                "operationId": "7f4516fd463ec0bddc660538186044a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "device_name": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesión correcto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthTokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Credenciales inválidas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registra un usuario y devuelve su token",
+                "operationId": "2c537ca990d53cb5f9fb6cbd978245cd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "surname",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "surname": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "maxLength": 150
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "nullable": true
+                                    },
+                                    "device_name": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthTokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Obtiene el usuario autenticado",
+                "operationId": "6c1f7282726e67ffdfe313f6a3fc19bc",
+                "responses": {
+                    "200": {
+                        "description": "Usuario autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Actualiza el perfil del usuario autenticado",
+                "operationId": "d33b152894f7896fdc2a0320ffeeac94",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "surname": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "maxLength": 150
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "nullable": true
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "role": {
+                                        "description": "Solo superadmins pueden cambiarlo",
+                                        "type": "string",
+                                        "enum": [
+                                            "user",
+                                            "admin",
+                                            "superadmin"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Elimina la cuenta autenticada",
+                "operationId": "49b8ed44b9c7c45fd881b483b47ba75f",
+                "responses": {
+                    "204": {
+                        "description": "Cuenta eliminada"
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Revoca el token actual",
+                "operationId": "100da3f6c9cb1f145c817999e8845b08",
+                "responses": {
+                    "204": {
+                        "description": "Sesión finalizada"
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/ingredients": {
+            "get": {
+                "tags": [
+                    "Ingredients"
+                ],
+                "summary": "Lista los ingredientes disponibles",
+                "operationId": "81693b06493a46045621d430aaf4b61a",
+                "responses": {
+                    "200": {
+                        "description": "Listado de ingredientes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IngredientCollectionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Ingredients"
+                ],
+                "summary": "Crea un ingrediente",
+                "operationId": "cee8f8fe03f7bb37fd3bc6fef3872912",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "ingredient",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0
+                                    },
+                                    "ingredient": {
+                                        "description": "Identificador interno",
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "available": {
+                                        "type": "boolean",
+                                        "default": false
+                                    },
+                                    "image": {
+                                        "description": "Imagen del ingrediente",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ingrediente creado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IngredientResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/ingredients/{ingredient}": {
+            "put": {
+                "tags": [
+                    "Ingredients"
+                ],
+                "summary": "Actualiza un ingrediente",
+                "operationId": "7b40210d418b818c708aa0f690c5a2c3",
+                "parameters": [
+                    {
+                        "name": "ingredient",
+                        "in": "path",
+                        "description": "ID del ingrediente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0
+                                    },
+                                    "ingredient": {
+                                        "type": "string",
+                                        "maxLength": 50
+                                    },
+                                    "available": {
+                                        "type": "boolean"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ingrediente actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IngredientResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pizzas": {
+            "get": {
+                "tags": [
+                    "Pizzas"
+                ],
+                "summary": "Lista las pizzas disponibles",
+                "operationId": "cfd30eea7f37b73107dfd44b9642f5be",
+                "responses": {
+                    "200": {
+                        "description": "Listado de pizzas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PizzaCollectionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Pizzas"
+                ],
+                "summary": "Crea una pizza",
+                "operationId": "9dc575f475bce6dcc8fa5d5a3e3b2bbc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0
+                                    },
+                                    "is_recommended": {
+                                        "type": "boolean",
+                                        "default": false
+                                    },
+                                    "image": {
+                                        "description": "Imagen principal de la pizza",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pizza creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PizzaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pizzas/{pizza}": {
+            "put": {
+                "tags": [
+                    "Pizzas"
+                ],
+                "summary": "Actualiza una pizza",
+                "operationId": "d2e5fab9e49e85763bf9e86cd1bb622b",
+                "parameters": [
+                    {
+                        "name": "pizza",
+                        "in": "path",
+                        "description": "ID de la pizza",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0
+                                    },
+                                    "is_recommended": {
+                                        "type": "boolean"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pizza actualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PizzaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Actualiza un usuario",
+                "operationId": "b25e9c38531ff7ddb52928cdcefb7777",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID del usuario a modificar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "surname": {
+                                        "type": "string",
+                                        "maxLength": 100
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "maxLength": 150
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "maxLength": 30,
+                                        "nullable": true
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "minLength": 8
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "user",
+                                            "admin",
+                                            "superadmin"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuario actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Elimina un usuario",
+                "operationId": "6b5ff9c55f042d7fa3228548df8d096d",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Usuario eliminado"
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UserResource": {
+                "properties": {
+                    "id": {
+                        "description": "Colección de esquemas reutilizables para las respuestas de la API.",
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Ada"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Lovelace"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ada@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+34 600 123 123",
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "user"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AuthTokenResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "user": {
+                                "$ref": "#/components/schemas/UserResource"
+                            },
+                            "access_token": {
+                                "type": "string",
+                                "example": "1|ZxC..."
+                            },
+                            "token_type": {
+                                "type": "string",
+                                "example": "Bearer"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "user": {
+                                "$ref": "#/components/schemas/UserResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "IngredientImage": {
+                "properties": {
+                    "public_id": {
+                        "type": "string",
+                        "example": "api-restaurant/ingredients/abc123"
+                    },
+                    "secure_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "https://res.cloudinary.com/demo/image/upload/v1/ingredients.png"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "format": {
+                        "type": "string",
+                        "example": "png"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "example": "image"
+                    },
+                    "bytes": {
+                        "type": "integer",
+                        "example": 450123
+                    },
+                    "width": {
+                        "type": "integer",
+                        "example": 1200
+                    },
+                    "height": {
+                        "type": "integer",
+                        "example": 800
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "IngredientResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Mozzarella"
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "2.50"
+                    },
+                    "ingredient": {
+                        "type": "string",
+                        "example": "cheese"
+                    },
+                    "available": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "image_url": {
+                        "$ref": "#/components/schemas/IngredientImage"
+                    }
+                },
+                "type": "object"
+            },
+            "IngredientResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "ingredient": {
+                                "$ref": "#/components/schemas/IngredientResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "IngredientCollectionResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "ingredients": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/IngredientResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PizzaImage": {
+                "properties": {
+                    "public_id": {
+                        "type": "string"
+                    },
+                    "secure_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "format": {
+                        "type": "string",
+                        "example": "jpg"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "example": "image"
+                    },
+                    "bytes": {
+                        "type": "integer"
+                    },
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "PizzaResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 99
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Diavola"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "12.90"
+                    },
+                    "is_recommended": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "image_url": {
+                        "$ref": "#/components/schemas/PizzaImage"
+                    }
+                },
+                "type": "object"
+            },
+            "PizzaResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "pizza": {
+                                "$ref": "#/components/schemas/PizzaResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PizzaCollectionResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "pizzas": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PizzaResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "email": [
+                                "Las credenciales no coinciden."
+                            ]
+                        },
+                        "additionalProperties": {
+                            "schema": "Schemas",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Schemas": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "UnauthorizedError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Unauthenticated."
+                    },
+                    "status": {
+                        "type": "integer",
+                        "example": 401
+                    }
+                },
+                "type": "object"
+            },
+            "ForbiddenError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "This action is unauthorized."
+                    },
+                    "status": {
+                        "type": "integer",
+                        "example": 403
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Incluye el token generado en el login o registro usando el formato: Bearer {token}",
+                "bearerFormat": "Sanctum Token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Endpoints de autenticación y perfil"
+        },
+        {
+            "name": "Users",
+            "description": "Administración de usuarios"
+        },
+        {
+            "name": "Ingredients",
+            "description": "Gestión de ingredientes del menú"
+        },
+        {
+            "name": "Pizzas",
+            "description": "Gestión de pizzas del menú"
+        }
+    ]
+}
