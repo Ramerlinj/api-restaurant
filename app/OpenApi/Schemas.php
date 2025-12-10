@@ -141,6 +141,37 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Schema(
+ *     schema="CityResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=101),
+ *     @OA\Property(property="name", type="string", example="Santo Domingo")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="CityResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(property="city", ref="#/components/schemas/CityResource")
+ *     )
+ * )
+ *
+ * @OA\Schema(
+ *     schema="CityCollectionResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(
+ *             property="cities",
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/CityResource")
+ *         )
+ *     )
+ * )
+ *
+ * @OA\Schema(
  *     schema="ValidationError",
  *     type="object",
  *     @OA\Property(property="message", type="string", example="The given data was invalid."),
