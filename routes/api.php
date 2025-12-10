@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Auth\Controllers\AuthController;
+use App\Modules\Locations\Controllers\CityController;
 use App\Modules\Menu\Controllers\IngredientController;
 use App\Modules\Menu\Controllers\PizzaController;
 use App\Modules\Users\Controllers\UserController;
@@ -38,5 +39,15 @@ Route::prefix('pizzas')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/', [PizzaController::class, 'store'])->name('pizzas.store');
         Route::put('{pizza}', [PizzaController::class, 'update'])->name('pizzas.update');
+    });
+});
+
+Route::prefix('cities')->group(function (): void {
+    Route::get('/', [CityController::class, 'index'])->name('cities.index');
+
+    Route::middleware('auth:sanctum')->group(function (): void {
+        Route::post('/', [CityController::class, 'store'])->name('cities.store');
+        Route::put('{city}', [CityController::class, 'update'])->name('cities.update');
+        Route::delete('{city}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
 });

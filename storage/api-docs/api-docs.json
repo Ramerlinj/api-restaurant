@@ -348,6 +348,236 @@
                 ]
             }
         },
+        "/api/cities": {
+            "get": {
+                "tags": [
+                    "Cities"
+                ],
+                "summary": "Lista todas las ciudades disponibles",
+                "operationId": "fa43e5bff5e9bd1fdf4bcdce63f74932",
+                "responses": {
+                    "200": {
+                        "description": "Listado de ciudades",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CityCollectionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Cities"
+                ],
+                "summary": "Crea una ciudad",
+                "operationId": "b8230b0bfa2bfbc1a67bb09ff498bc19",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id",
+                                    "name"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 120
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ciudad creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CityResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/cities/{city}": {
+            "put": {
+                "tags": [
+                    "Cities"
+                ],
+                "summary": "Actualiza el nombre de una ciudad",
+                "operationId": "b4998815c93eb1bd1c41662e9cff7269",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "path",
+                        "description": "ID de la ciudad",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 120
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ciudad actualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CityResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cities"
+                ],
+                "summary": "Elimina una ciudad",
+                "operationId": "5bbbbc94fce3288d2c4cab062d1a4588",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "path",
+                        "description": "ID de la ciudad",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ciudad eliminada"
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/ingredients": {
             "get": {
                 "tags": [
@@ -1205,6 +1435,48 @@
                 },
                 "type": "object"
             },
+            "CityResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 101
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Santo Domingo"
+                    }
+                },
+                "type": "object"
+            },
+            "CityResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "city": {
+                                "$ref": "#/components/schemas/CityResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "CityCollectionResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "cities": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CityResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "ValidationError": {
                 "properties": {
                     "message": {
@@ -1287,6 +1559,10 @@
         {
             "name": "Pizzas",
             "description": "Gestión de pizzas del menú"
+        },
+        {
+            "name": "Cities",
+            "description": "Administración de ciudades disponibles para direcciones"
         }
     ]
 }

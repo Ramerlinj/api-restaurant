@@ -28,6 +28,7 @@ use OpenApi\Annotations as OA;
  * @OA\Tag(name="Users", description="Administración de usuarios")
  * @OA\Tag(name="Ingredients", description="Gestión de ingredientes del menú")
  * @OA\Tag(name="Pizzas", description="Gestión de pizzas del menú")
+ * @OA\Tag(name="Cities", description="Administración de ciudades disponibles para direcciones")
  */
 class SwaggerDoc
 {
