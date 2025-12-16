@@ -1006,6 +1006,566 @@
                 ]
             }
         },
+        "/api/pizzas/{pizza}/ingredients": {
+            "get": {
+                "tags": [
+                    "Pizzas"
+                ],
+                "summary": "Lista los ingredientes asociados a una pizza",
+                "operationId": "db9dfc3b7c11eeb0173b556f5c5eadf7",
+                "parameters": [
+                    {
+                        "name": "pizza",
+                        "in": "path",
+                        "description": "ID de la pizza",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de ingredientes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PizzaIngredientCollectionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Pizzas"
+                ],
+                "summary": "Asocia un ingrediente a la pizza",
+                "operationId": "1eb28cb7a9d37adba7b2be953559f0d3",
+                "parameters": [
+                    {
+                        "name": "pizza",
+                        "in": "path",
+                        "description": "ID de la pizza",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ingredient_id"
+                                ],
+                                "properties": {
+                                    "ingredient_id": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ingrediente vinculado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PizzaIngredientResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pizzas/{pizza}/ingredients/{pivot}": {
+            "delete": {
+                "tags": [
+                    "Pizzas"
+                ],
+                "summary": "Elimina la relación entre una pizza y un ingrediente",
+                "operationId": "2b8433c749ddabf1aa5df7e8d52412cd",
+                "parameters": [
+                    {
+                        "name": "pizza",
+                        "in": "path",
+                        "description": "ID de la pizza",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pivot",
+                        "in": "path",
+                        "description": "ID del registro pizza_ingredient",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ingrediente desvinculado"
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Lista las órdenes del usuario autenticado o todas si es admin",
+                "operationId": "745ae49c58e1f04df4805e29759b70ce",
+                "parameters": [
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "description": "Solo admins: incluir todas las órdenes",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de órdenes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderCollectionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Crea una nueva orden",
+                "operationId": "128abc05f8e101791ba28a1c7136f23c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "items"
+                                ],
+                                "properties": {
+                                    "address_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "address": {
+                                        "properties": {
+                                            "address_line": {
+                                                "type": "string",
+                                                "maxLength": 200
+                                            },
+                                            "city_id": {
+                                                "type": "integer"
+                                            },
+                                            "sector": {
+                                                "type": "string",
+                                                "maxLength": 100,
+                                                "nullable": true
+                                            },
+                                            "reference": {
+                                                "type": "string",
+                                                "maxLength": 200,
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object",
+                                        "nullable": true
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "pizza_id"
+                                            ],
+                                            "properties": {
+                                                "pizza_id": {
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "default": 1,
+                                                    "minimum": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Orden creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Obtiene una orden específica",
+                "operationId": "6194b0f9dd0dd8207f4ed56a92042dc0",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID de la orden",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Orden encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{order}/status": {
+            "put": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Actualiza el estado de una orden",
+                "operationId": "82ff70d2bfe3fd5d8d9f8d9ab3703460",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID de la orden",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending",
+                                            "paid",
+                                            "preparing",
+                                            "delivered",
+                                            "cancelled"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Estado actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{order}/payments": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Registra un pago para la orden",
+                "operationId": "9dbce8e29a06a9d7f2ebe358e563093f",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID de la orden",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0.01
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending",
+                                            "completed",
+                                            "failed"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pago registrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Datos inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/users/{user}": {
             "put": {
                 "tags": [
@@ -1435,6 +1995,55 @@
                 },
                 "type": "object"
             },
+            "PizzaIngredientResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 501
+                    },
+                    "pizza_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "ingredient_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "ingredient": {
+                        "$ref": "#/components/schemas/IngredientResource"
+                    }
+                },
+                "type": "object"
+            },
+            "PizzaIngredientResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "pizza_ingredient": {
+                                "$ref": "#/components/schemas/PizzaIngredientResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PizzaIngredientCollectionResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "ingredients": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PizzaIngredientResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "CityResource": {
                 "properties": {
                     "id": {
@@ -1470,6 +2079,153 @@
                                 "items": {
                                     "$ref": "#/components/schemas/CityResource"
                                 }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "AddressResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 9001
+                    },
+                    "address_line": {
+                        "type": "string",
+                        "example": "Av. Central #123"
+                    },
+                    "sector": {
+                        "type": "string",
+                        "example": "Zona Colonial",
+                        "nullable": true
+                    },
+                    "reference": {
+                        "type": "string",
+                        "example": "Frente al parque",
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItemResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1001
+                    },
+                    "pizza_id": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "unit_price": {
+                        "type": "string",
+                        "example": "12.90"
+                    },
+                    "pizza": {
+                        "$ref": "#/components/schemas/PizzaResource"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 77
+                    },
+                    "amount": {
+                        "type": "string",
+                        "example": "25.80"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "completed"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "OrderResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 5000
+                    },
+                    "total": {
+                        "type": "string",
+                        "example": "25.80"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/AddressResource"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItemResource"
+                        }
+                    },
+                    "payments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PaymentResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "OrderResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "order": {
+                                "$ref": "#/components/schemas/OrderResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderCollectionResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "orders": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "payment": {
+                                "$ref": "#/components/schemas/PaymentResource"
                             }
                         },
                         "type": "object"
@@ -1563,6 +2319,14 @@
         {
             "name": "Cities",
             "description": "Administración de ciudades disponibles para direcciones"
+        },
+        {
+            "name": "Orders",
+            "description": "Gestión de órdenes de compra"
+        },
+        {
+            "name": "Payments",
+            "description": "Registro de pagos asociados a órdenes"
         }
     ]
 }

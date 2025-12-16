@@ -4,6 +4,9 @@ use App\Modules\Auth\Controllers\AuthController;
 use App\Modules\Locations\Controllers\CityController;
 use App\Modules\Menu\Controllers\IngredientController;
 use App\Modules\Menu\Controllers\PizzaController;
+use App\Modules\Menu\Controllers\PizzaIngredientController;
+use App\Modules\Orders\Controllers\OrderController;
+use App\Modules\Payments\Controllers\PaymentController;
 use App\Modules\Users\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +43,15 @@ Route::prefix('pizzas')->group(function (): void {
         Route::post('/', [PizzaController::class, 'store'])->name('pizzas.store');
         Route::put('{pizza}', [PizzaController::class, 'update'])->name('pizzas.update');
     });
+
+    Route::prefix('{pizza}/ingredients')->group(function (): void {
+        Route::get('/', [PizzaIngredientController::class, 'index'])->name('pizzas.ingredients.index');
+
+        Route::middleware('auth:sanctum')->group(function (): void {
+            Route::post('/', [PizzaIngredientController::class, 'store'])->name('pizzas.ingredients.store');
+            Route::delete('{pivot}', [PizzaIngredientController::class, 'destroy'])->name('pizzas.ingredients.destroy');
+        });
+    });
 });
 
 Route::prefix('cities')->group(function (): void {
@@ -50,4 +62,12 @@ Route::prefix('cities')->group(function (): void {
         Route::put('{city}', [CityController::class, 'update'])->name('cities.update');
         Route::delete('{city}', [CityController::class, 'destroy'])->name('cities.destroy');
     });
+});
+
+Route::middleware('auth:sanctum')->prefix('orders')->group(function (): void {
+    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::put('{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::post('{order}/payments', [PaymentController::class, 'store'])->name('orders.payments.store');
 });

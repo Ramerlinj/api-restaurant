@@ -29,6 +29,8 @@ use OpenApi\Annotations as OA;
  * @OA\Tag(name="Ingredients", description="Gestión de ingredientes del menú")
  * @OA\Tag(name="Pizzas", description="Gestión de pizzas del menú")
  * @OA\Tag(name="Cities", description="Administración de ciudades disponibles para direcciones")
+ * @OA\Tag(name="Orders", description="Gestión de órdenes de compra")
+ * @OA\Tag(name="Payments", description="Registro de pagos asociados a órdenes")
  */
 class SwaggerDoc
 {

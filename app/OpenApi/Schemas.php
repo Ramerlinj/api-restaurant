@@ -141,6 +141,39 @@ use OpenApi\Annotations as OA;
  * )
  *
  * @OA\Schema(
+ *     schema="PizzaIngredientResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=501),
+ *     @OA\Property(property="pizza_id", type="integer", example=10),
+ *     @OA\Property(property="ingredient_id", type="integer", example=3),
+ *     @OA\Property(property="ingredient", ref="#/components/schemas/IngredientResource")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="PizzaIngredientResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(property="pizza_ingredient", ref="#/components/schemas/PizzaIngredientResource")
+ *     )
+ * )
+ *
+ * @OA\Schema(
+ *     schema="PizzaIngredientCollectionResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(
+ *             property="ingredients",
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/PizzaIngredientResource")
+ *         )
+ *     )
+ * )
+ *
+ * @OA\Schema(
  *     schema="CityResource",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=101),
@@ -168,6 +201,80 @@ use OpenApi\Annotations as OA;
  *             type="array",
  *             @OA\Items(ref="#/components/schemas/CityResource")
  *         )
+ *     )
+ * )
+ *
+ * @OA\Schema(
+ *     schema="AddressResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=9001),
+ *     @OA\Property(property="address_line", type="string", example="Av. Central #123"),
+ *     @OA\Property(property="sector", type="string", nullable=true, example="Zona Colonial"),
+ *     @OA\Property(property="reference", type="string", nullable=true, example="Frente al parque"),
+ *     @OA\Property(property="city_id", type="integer", example=2)
+ * )
+ *
+ * @OA\Schema(
+ *     schema="OrderItemResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1001),
+ *     @OA\Property(property="pizza_id", type="integer", example=15),
+ *     @OA\Property(property="quantity", type="integer", example=2),
+ *     @OA\Property(property="unit_price", type="string", example="12.90"),
+ *     @OA\Property(property="pizza", ref="#/components/schemas/PizzaResource")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="PaymentResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=77),
+ *     @OA\Property(property="amount", type="string", example="25.80"),
+ *     @OA\Property(property="status", type="string", example="completed"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", nullable=true)
+ * )
+ *
+ * @OA\Schema(
+ *     schema="OrderResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=5000),
+ *     @OA\Property(property="total", type="string", example="25.80"),
+ *     @OA\Property(property="status", type="string", example="pending"),
+ *     @OA\Property(property="address", ref="#/components/schemas/AddressResource"),
+ *     @OA\Property(property="items", type="array", @OA\Items(ref="#/components/schemas/OrderItemResource")),
+ *     @OA\Property(property="payments", type="array", @OA\Items(ref="#/components/schemas/PaymentResource"))
+ * )
+ *
+ * @OA\Schema(
+ *     schema="OrderResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(property="order", ref="#/components/schemas/OrderResource")
+ *     )
+ * )
+ *
+ * @OA\Schema(
+ *     schema="OrderCollectionResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(
+ *             property="orders",
+ *             type="array",
+ *             @OA\Items(ref="#/components/schemas/OrderResource")
+ *         )
+ *     )
+ * )
+ *
+ * @OA\Schema(
+ *     schema="PaymentResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="data",
+ *         type="object",
+ *         @OA\Property(property="payment", ref="#/components/schemas/PaymentResource")
  *     )
  * )
  *
